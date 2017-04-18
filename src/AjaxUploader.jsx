@@ -25,12 +25,14 @@ const AjaxUploader = React.createClass({
     customRequest: PropTypes.func,
     onProgress: PropTypes.func,
     withCredentials: PropTypes.bool,
+    uploadImmediately: PropTypes.bool,
   },
 
   getInitialState() {
     this.reqs = {};
     return {
       uid: getUid(),
+      files: null,
     };
   },
 
@@ -40,7 +42,12 @@ const AjaxUploader = React.createClass({
 
   onChange(e) {
     const files = e.target.files;
-    this.uploadFiles(files);
+    this.setState({ files });
+
+    if (this.props.uploadImmediately) {
+      this.uploadFiles(files);
+    }
+
     this.reset();
   },
 
@@ -65,9 +72,22 @@ const AjaxUploader = React.createClass({
     }
 
     const files = e.dataTransfer.files;
-    this.uploadFiles(files);
+
+    this.setState({ files });
+
+    if (this.props.uploadImmediately) {
+      this.uploadFiles(files);
+    }
 
     e.preventDefault();
+  },
+
+  startUpload() {
+    if (this.props.uploadImmediately) {
+      return;
+    }
+
+    this.uploadFiles(this.state.files);
   },
 
   uploadFiles(files) {

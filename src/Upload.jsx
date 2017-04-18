@@ -1,6 +1,5 @@
 import React, { PropTypes } from 'react';
 import AjaxUpload from './AjaxUploader';
-import IframeUpload from './IframeUploader';
 
 function empty() {
 }
@@ -30,6 +29,7 @@ const Upload = React.createClass({
     onReady: PropTypes.func,
     withCredentials: PropTypes.bool,
     supportServerRender: PropTypes.bool,
+    uploadImmediately: PropTypes.bool,
   },
 
   getDefaultProps() {
@@ -49,6 +49,7 @@ const Upload = React.createClass({
       beforeUpload: null,
       customRequest: null,
       withCredentials: false,
+      uploadImmediately: false,
     };
   },
 
@@ -67,11 +68,15 @@ const Upload = React.createClass({
     }
   },
   getComponent() {
-    return typeof FormData !== 'undefined' ? AjaxUpload : IframeUpload;
+    return AjaxUpload;
   },
 
   abort(file) {
     this.refs.inner.abort(file);
+  },
+
+  upload() {
+    this.refs.inner.startUpload();
   },
 
   render() {
